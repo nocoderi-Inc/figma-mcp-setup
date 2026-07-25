@@ -1,0 +1,12 @@
+[mcp_servers.figma-developer-mcp]
+type = "stdio"
+command = "npx"
+args = ["-y", "figma-developer-mcp", "--stdio"]
+
+[mcp_servers.figma-developer-mcp.env]
+FIGMA_API_KEY = "${FIGMA_API_KEY}"
+
+[mcp_servers.claude-talk-to-figma]
+type = "stdio"
+command = "npx"
+args = ["-p", "claude-talk-to-figma-mcp@latest", "claude-talk-to-figma-mcp-server"]

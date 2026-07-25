@@ -1,0 +1,16 @@
+{
+  "name": "@nocoderi/figma-mcp-setup",
+  "version": "1.0.0",
+  "description": "Figma MCP one-command setup for Claude Code & Codex CLI",
+  "type": "module",
+  "bin": {
+    "figma-mcp-setup": "./setup.mjs",
+    "figma-mcp-start": "./start.mjs"
+  },
+  "files": [
+    "setup.mjs",
+    "start.mjs",
+    "templates/"
+  ],
+  "license": "MIT"
+}
