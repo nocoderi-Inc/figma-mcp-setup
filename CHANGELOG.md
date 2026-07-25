@@ -25,6 +25,17 @@ git push && git push --tags
 
 ---
 
+## [1.1.0] - 2026-07-26
+
+### 新機能: url-to-figma スキル
+
+- **URL → Figma変換**: Webページのcomputed stylesを機械抽出し、ほぼピクセルパーフェクトにFigmaデザインを生成
+  - 3サイズ自動生成（375px / 768px / 1024px）
+  - CSS→Figmaプロパティの機械的マッピング（色、フォント、Auto Layout、shadow等）
+- **画像 → Figma配置**: ローカル画像をbase64経由でFigmaに直接配置
+- **画像 → デザイン再現**: スクリーンショットからClaude視覚解釈でUI再構築
+- セットアップ時にスキルを `~/.claude/skills/url-to-figma/` に自動インストール
+
 ## [1.0.0] - 2026-07-25
 
 ### 初回リリース

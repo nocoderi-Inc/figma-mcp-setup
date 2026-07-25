@@ -223,6 +223,31 @@ function installPlugin() {
   return manifestPath;
 }
 
+function installSkill() {
+  log("");
+  info("url-to-figma スキルをインストール中...");
+
+  const skillDir = join(HOME, ".claude", "skills", "url-to-figma");
+  const skillFile = join(skillDir, "SKILL.md");
+
+  if (existsSync(skillFile)) {
+    info("url-to-figma スキルは既にインストール済み。上書きします");
+  }
+
+  mkdirSync(skillDir, { recursive: true });
+
+  try {
+    const skillSource = new URL("./skills/url-to-figma/SKILL.md", import.meta.url);
+    const content = readFileSync(skillSource, "utf-8");
+    writeFileSync(skillFile, content);
+    success("url-to-figma スキルをインストール完了");
+    log(`  ${COLORS.dim}使い方: Claude Codeで「このURLをFigma化して: https://...」${COLORS.reset}`);
+  } catch (e) {
+    warn("スキルのインストールに失敗");
+    log(`  ${COLORS.dim}手動コピー: skills/url-to-figma/SKILL.md → ~/.claude/skills/url-to-figma/SKILL.md${COLORS.reset}`);
+  }
+}
+
 function showPluginInstructions(manifestPath) {
   log("");
   log(`${COLORS.bold}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${COLORS.reset}`);
@@ -288,7 +313,10 @@ async function main() {
     // 4. プラグインインストール
     const manifestPath = installPlugin();
 
-    // 5. 手順表示
+    // 5. スキルインストール（Claude Code選択時のみ）
+    if (tools.claude) installSkill();
+
+    // 6. 手順表示
     showPluginInstructions(manifestPath);
     showDailyUsage();
 
