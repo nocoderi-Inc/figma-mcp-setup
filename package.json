@@ -12,5 +12,9 @@
     "start.mjs",
     "templates/"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nocoderi-Inc/figma-mcp-setup.git"
+  },
   "license": "MIT"
 }
