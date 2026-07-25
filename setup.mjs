@@ -246,7 +246,7 @@ function showDailyUsage() {
   log(`${COLORS.bold}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${COLORS.reset}`);
   log("");
   log("  Step 1: WebSocketサーバーを起動");
-  log(`    ${COLORS.cyan}npx figma-mcp-start${COLORS.reset}`);
+  log(`    ${COLORS.cyan}npx -p claude-talk-to-figma-mcp@latest claude-talk-to-figma-mcp-socket${COLORS.reset}`);
   log("");
   log("  Step 2: Figma Desktop でプラグインを起動");
   log("    Menu > Plugins > Development > Claude Talk to Figma Plugin");

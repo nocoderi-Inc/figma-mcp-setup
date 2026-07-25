@@ -1,6 +1,6 @@
 # Figma MCP セットアップツール
 
-Claude Code / Codex CLI から Figma のデザインを直接作成・編集できるようにするワンコマンドセットアップツール。
+Claude Code / Codex CLI から Figma のデザインを直接作成・編集できるようにするセットアップツール。
 
 ## これは何？
 
@@ -19,36 +19,60 @@ AIエージェント → MCP Server → WebSocket → Figmaプラグイン → �
 
 | 項目 | 入手先 |
 |------|--------|
-| Node.js v18以上 | https://nodejs.org |
+| Node.js v18以上 | 下記のインストール手順を参照 |
 | Figma Desktop | https://www.figma.com/downloads/ |
 | Claude Code or Codex CLI | 社内配布手順に従う |
 | Figma APIキー | 下記の取得手順を参照 |
 
+### Node.js のインストール
+
+Node.js が未インストールの場合、以下の手順でインストールしてください。
+
+**macOS:**
+1. https://nodejs.org を開く
+2. 「LTS（推奨版）」のボタンをクリックしてダウンロード
+3. ダウンロードした `.pkg` ファイルをダブルクリックしてインストール
+4. ターミナルを開いて `node --version` と入力し、バージョンが表示されればOK
+
+**Windows:**
+1. https://nodejs.org を開く
+2. 「LTS（推奨版）」のボタンをクリックしてダウンロード
+3. ダウンロードした `.msi` ファイルをダブルクリックしてインストール（設定はすべてデフォルトでOK）
+4. コマンドプロンプトまたはPowerShellを開いて `node --version` と入力し、バージョンが表示されればOK
+
+### ターミナルの開き方
+
+**macOS:** Spotlight（Cmd + Space）で「ターミナル」と検索して開く
+**Windows:** スタートメニューで「PowerShell」と検索して開く
+
 ### Figma APIキーの取得
 
-1. https://www.figma.com/developers/api#access-tokens を開く
-2. 「Generate new token」をクリック
+1. Figma にログインした状態で https://www.figma.com/developers/api#access-tokens を開く
+2. 「Personal access tokens」セクションの「Generate new token」をクリック
 3. トークン名を入力（例: `mcp-setup`）
-4. 生成された `figd_xxxx...` をコピー
+4. 「Generate token」をクリック
+5. 表示された `figd_xxxx...` で始まる文字列をコピー（**このページを閉じると二度と表示されません**）
 
 ## セットアップ（1回だけ）
 
+ターミナル（macOS）またはPowerShell（Windows）を開いて、以下をコピペして Enter：
+
 ```bash
-npx @nocoderi/figma-mcp-setup
+npx github:nocoderi-Inc/figma-mcp-setup
 ```
 
-対話式で以下を設定します：
-1. Figma APIキーの入力
-2. AIツールの選択（Claude Code / Codex / 両方）
-3. 設定ファイルの自動生成
-4. Figmaプラグインのインポート手順の表示
+対話式で以下を聞かれます：
+1. **Figma APIキー** → 上で取得した `figd_xxxx...` を貼り付け
+2. **AIツールの選択** → 番号を入力（1: Claude Code / 2: Codex / 3: 両方）
+3. 設定ファイルが自動生成されます
 
 ### Figmaプラグインのインポート
 
-セットアップスクリプト完了後、Figma Desktopで以下を実行：
+セットアップ完了時に表示される `manifest.json` のパスを使って：
 
-1. **Menu** > **Plugins** > **Development** > **Import plugin from manifest**
-2. 表示されたパスの `manifest.json` を選択
+1. **Figma Desktop** を開く
+2. 左上の **Figma メニュー** > **Plugins** > **Development** > **Import plugin from manifest...**
+3. 表示されたパスの `manifest.json` ファイルを選択
 
 > この手順は1回だけ必要です。以後は「最近使ったプラグイン」から起動できます。
 
@@ -56,23 +80,20 @@ npx @nocoderi/figma-mcp-setup
 
 ### Step 1: WebSocketサーバーを起動
 
+ターミナルで以下を実行：
+
 ```bash
-npx figma-mcp-start
+npx -p claude-talk-to-figma-mcp@latest claude-talk-to-figma-mcp-socket
 ```
 
 `Claude to Figma WebSocket server running on port 3055` と表示されればOK。
 
-バックグラウンドで起動する場合：
-```bash
-npx figma-mcp-start --bg      # バックグラウンド起動
-npx figma-mcp-start --status   # 状態確認
-npx figma-mcp-start --stop     # 停止
-```
+> このターミナルは**開いたまま**にしておいてください（閉じるとサーバーが止まります）。
 
 ### Step 2: Figmaプラグインを起動
 
 1. Figma Desktop でデザインファイルを開く
-2. **Menu** > **Plugins** > **Development** > **Claude Talk to Figma Plugin**
+2. 右クリック > **Plugins** > **Development** > **Claude Talk to Figma Plugin**
 3. 表示される**チャンネルID**（緑のボックス内の太字コード）をコピー
 
 ### Step 3: AIから接続
@@ -149,6 +170,10 @@ Connect to Figma, channel: abc123
 
 ## トラブルシューティング
 
+### 「node: command not found」と表示される
+
+Node.js がインストールされていません。上記の「Node.js のインストール」手順に従ってください。
+
 ### WebSocketサーバーが起動しない
 
 ```bash
@@ -164,8 +189,8 @@ netstat -ano | findstr :3055
 
 ### プラグインが接続できない
 
-1. WebSocketサーバーが起動しているか確認: `npx figma-mcp-start --status`
-2. Figmaプラグインを再起動して新しいチャンネルIDを取得
+1. WebSocketサーバーが起動しているか確認（ターミナルに `running on port 3055` と表示されているか）
+2. Figmaプラグインを一度閉じて再起動し、新しいチャンネルIDを取得
 3. ファイアウォールが localhost:3055 をブロックしていないか確認
 
 ### 「FIGMA_API_KEY が設定されていない」と表示される
@@ -174,13 +199,13 @@ netstat -ano | findstr :3055
 # macOS: ターミナルを再起動するか、以下を実行
 source ~/.zshrc
 
-# Windows: ターミナルを再起動
+# Windows: ターミナル（PowerShell）を再起動
 ```
 
 ### セットアップをやり直したい
 
 ```bash
-npx @nocoderi/figma-mcp-setup
+npx github:nocoderi-Inc/figma-mcp-setup
 ```
 
 何度実行しても安全です（既存設定はバックアップされます）。
@@ -189,14 +214,15 @@ npx @nocoderi/figma-mcp-setup
 
 | 項目 | 対応 |
 |------|------|
-| macOS | ✅ |
-| Windows | ✅ |
-| Claude Code | ✅ |
-| Codex CLI | ✅ |
-| Figma 無料プラン | ✅（Dev Mode不要） |
+| macOS | OK |
+| Windows | OK |
+| Claude Code | OK |
+| Codex CLI | OK |
+| Figma 無料プラン | OK（Dev Mode不要） |
 
 ## 制約事項
 
 - Figmaプラグインは手動で起動する必要があります（バックグラウンド常駐不可）
 - プラグインを閉じるとWebSocket接続が切れます
+- WebSocketサーバーのターミナルを閉じると接続が切れます
 - 大量のノード作成（数百以上）ではパフォーマンスが低下する場合があります
